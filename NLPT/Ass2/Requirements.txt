@@ -1,0 +1,19 @@
+Requirements
+
+Files for running the python scripts van be found in this folder.
+For running the python scripts the following file are needed:
+-conllst.2017.trial.simple.conll (partB.py)
+-conllst.2017.trial.simple.dep.conll (PartC.py)
+
+
+For the python scripts to run, one should import the following python packages.
+
+partB.py:
+import spacy
+from spacy.tokens import Doc
+import pandas as pd
+
+partC.py:
+import spacy
+import pandas as pd
+import csv

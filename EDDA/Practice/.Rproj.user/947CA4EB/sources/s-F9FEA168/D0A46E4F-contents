@@ -1,0 +1,114 @@
+#Tiddo Loos - 2574974
+
+#A
+boxplot(beech,oak)
+tree = read.table(file="treeVolume.txt", header = T)
+treelm = lm(volume~type, data=tree)
+anova(treelm) #typeoak does not significantly influence volume
+summary(treelm) #estimated volume beech = 30.17, estimated volume oak = 30.171 + 5.079 = 35.25 
+qqnorm(residuals(treelm))
+shapiro.test(residuals(treelm)) # not normally distributed P<0.05
+plot(fitted(treelm), residuals(treelm)) # looks okay.
+#but ANOVA assumptions are not met.
+
+#B
+boxplot(beech,oak)
+qqnorm(tree$volume)
+shapiro.test(tree$volume) # not normally distributed
+beech = tree$volume[1:31]
+oak = tree$volume[32:59]
+length(beech)
+length(oak)
+shapiro.test(beech) #not normal so we cannot use a T-test
+shapiro.test(oak) #normally distributed
+#we cannot do t-test,
+#but we can do unpaired mann-whitney, kolmogorov-smirnov
+wilcox.test(beech, oak, paired = F) #p<0.05 so samples differ
+ks.test(beech,oak, paired=F) #p<0.05 so samples differ
+# for permuation test you do not assume normality so you can do the test.
+
+attach(tree)
+X = sum(residuals(lm(volume~type, data=tree))^2)
+mystat=function(X)
+B=1000
+tstar=numeric(B)
+for (i in 1:B) {
+  typestar=sample(tree$type) # permuting the labels
+  tstar[i]=mystat(lm(volume~typestar, data=tree)) }
+myt=mystat(lm(volume~type))
+hist(tstar)
+myt
+pl=sum(tstar<myt)/B
+pr=sum(tstar>myt)/B
+2*min(pl,pr)
+
+#C
+treelm2 = lm(volume~diameter+height+type, data=tree)
+anova(treelm2)# type still does not have a significant influence on the volume of the tree (p>0.05)
+#height and diameter ahve a significant infleunce on the Volume which is obvious. for both
+#p<0.001
+qqnorm(residuals(treelm2))
+shapiro.test(residuals(treelm2)) # normally distributed p>0.05
+plot(fitted(treelm2), residuals(treelm2)) # looks good
+summary(treelm2) 
+
+av_oak = data.frame(height = mean(tree$height),diameter = mean(tree$diameter), type = 'oak') 
+av_beech = data.frame(height = mean(tree$height),diameter = mean(tree$diameter), type = 'beech') 
+
+oak_pred = predict(treelm2, av_oak, type='response')
+beech_pred = predict(treelm2, av_beech, type='response')
+
+oak_pred; beech_pred
+
+
+#D
+treelm3 = lm(volume~diameter, data=tree) #p<0.05, does influence volume
+#assumptions
+anova(treelm3)
+summary(treelm3) #diameter has a positive influence on volume
+qqnorm(residuals(treelm3)) 
+shapiro.test(residuals(treelm3)) # normally distributed p>0.05
+plot(fitted(treelm3), residuals(treelm3)) # looks good
+
+
+treelm4 = lm(volume~diameter*type, data=tree)
+anova(treelm4) # there is no significant evidence that diameter has an interaction effect with type
+summary(treelm4) #Diameter has a positive effect on volume(significant, p<0.001)
+#We can see that the interaction diameter:typeoak has a (small) extra negative effect on the volume
+#but the results are not significant
+treelm5 = lm(volume~height*type, data=tree)
+summary(treelm5) #height has a positive effect on volume(significant, p<0.001)
+#We can see that the interaction height:typeoak has an extra negative effect on the volume
+#and the results are significant
+
+#Assumptions
+
+qqnorm(residuals(treelm4))
+shapiro.test(residuals(treelm4)) # normally distributed p>0.05
+plot(fitted(treelm3), residuals(treelm4)) # looks good
+
+qqnorm(residuals(treelm5))
+shapiro.test(residuals(treelm5)) # normally distributed p>0.05
+plot(fitted(treelm3), residuals(treelm5)) # looks a bit like there is a 
+#pattern which is not good
+
+
+#E 
+#volume = length*width*hight
+#the surface of a circle (slice of tree) would be pi*R^2
+# so for the volume of a tree one could say: treeVolume = pi*R^2*height
+tree$slice = pi*((tree$diameter*0.5)^2)
+treelm6 = lm(volume~height+slice+type, data=tree)
+anova(treelm6)
+summary(treelm6)
+slice_oak = data.frame(height = mean(tree$height),slice = mean(tree$slice), type = 'oak') 
+slice_beech = data.frame(height = mean(tree$height),slice = mean(tree$slice), type = 'beech')
+oak_pred_slice= predict(treelm6, slice_oak, type='response')
+beech_pred_slice = predict(treelm6, slice_beech, type='response')
+oak_pred_slice; beech_pred_slice
+
+#assumptions
+qqnorm(residuals(treelm6))
+shapiro.test(residuals(treelm6)) # normally distributed p>0.05
+plot(fitted(treelm6), residuals(treelm6)) # looks good
+

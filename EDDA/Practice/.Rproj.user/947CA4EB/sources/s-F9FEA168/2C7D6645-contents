@@ -1,0 +1,148 @@
+#FINAL ASSIGNMENT - Tiddo Loos - 2574974
+dietframe=read.table(file="diet.txt", header = TRUE)
+dietframe$gender = as.factor(dietframe$gender)
+dietframe$diet = as.factor(dietframe$diet)
+
+#A
+
+# check if samples pre/after weight are significantly different for the three types with paired t-tests
+#diet1 p<0.001
+t.test(dietframe$preweight[1:24],dietframe$weight6weeks[1:24],paired=TRUE)
+#diet2 p<0.001
+t.test(dietframe$preweight[25:51],dietframe$weight6weeks[25:51],paired=TRUE)
+#diet3 p<0.001
+t.test(dietframe$preweight[52:78],dietframe$weight6weeks[52:78],paired=TRUE)
+#from the t.test we can conclude that the diet has an effect on the weight loss
+
+par(mfrow=c(2,3))
+qqnorm(dietframe$preweight[1:24]); qqnorm(dietframe$weight6weeks[1:24])
+qqnorm(dietframe$preweight[25:51]); qqnorm(dietframe$weight6weeks[25:51])
+qqnorm(dietframe$preweight[52:78]); qqnorm(dietframe$weight6weeks[52:78])
+shapiro.test(dietframe$preweight[1:24]); shapiro.test(dietframe$weight6weeks[1:24])
+shapiro.test(dietframe$preweight[25:51]); shapiro.test(dietframe$weight6weeks[25:51])
+shapiro.test(dietframe$preweight[52:78]); shapiro.test(dietframe$weight6weeks[52:78])
+#The data for the pre/after diet weights of diet1 and diet3 are normally distributed and meet the 
+#assumptions for a paired t.test. But the pre/after weights for diet 2 are not normally distributed.
+#weights are not normally distributed so we have to use a different test for diet type2
+
+
+
+#B
+dietframe$weight.lost = dietframe$preweight-dietframe$weight6weeks
+median(dietframe$weight.lost) #median 3.6>3
+
+
+
+#C
+dietlm1=lm(weight.lost~diet, data=dietframe)
+anova(dietlm1)
+summary(dietlm1)
+qqnorm(residuals(dietlm1))
+#diet1,2 and 3 lead to weight loss
+#diet3 contributes most to weight loss
+#there is no significant evidence for diet type 2 affecting weight loss. 
+#The ANOVA assummtioins are met: residuals are normally distributed.
+
+
+#D
+attach(dietframe)
+interaction.plot(dietframe$diet,dietframe$gender,dietframe$weight.lost)
+interaction.plot(dietframe$gender,dietframe$diet,dietframe$weight.lost)
+dietlm2=lm(weight.lost~gender*diet, data=dietframe)
+anova(dietlm2) 
+summary(dietlm2)
+#there is a significant interaction between diet and gender (p<0.05)
+#gender on its own however does not have a significant effect on the weight loss
+#friedman: is usefull. however, on this data chages have to be made concerning the missing values.
+#with friedman it cn be test to whether diet has an influence on the lost weight, taking into account the
+#gender. with the follow code that is possible: friedman.test(weight.lost,diet,gender, data=dietframe)
+qqnorm(residuals(dietlm2))
+shapiro.test(residuals(dietlm2)) #p>0.05, residuals are normally distributed
+plot(fitted(dietlm2),residuals(dietlm2)) #no clear pattern can be seen. So the two-way anova assumptions are met 
+
+#E
+is.numeric(diet$height)
+dietlm3=lm(weight.lost~diet*height, data=dietframe)
+anova(dietlm3) #no evidence for interaction: p-value diet:height > 0.05
+summary(dietlm3) #diet3:height has a slightly negative effect on a person's weightloss: meaning that diet3:height
+#contributes to less weightloss
+#height:diet1 and height:diet2 slightly contribute to a positive effect on the weight loss.
+#however, non of the values are significant so the results are questionable.
+multi_lin=lm(weight.lost~diet+height, data=dietframe) #when doing multiple linear regression hight also has no
+summary(multi_lin) #significant effect on the weightloss.
+
+
+#ANOVA assumptions are met:
+qqnorm(residuals(dietlm3))
+shapiro.test(residuals(dietlm3))
+plot(fitted(dietlm3),residuals(dietlm3))
+
+#since there is no interaction the factors can be tested separately
+dietlm4=lm(weight.lost~height+diet, data=dietframe)
+anova(dietlm4)
+
+#F
+#For this question we take the model from C since, this model has one factor which is significant.
+#diet:height did not show a significant interaction. Therefore, we choose to use the smaller and significant model
+#from c
+dietlm1=lm(weight.lost~diet, data=dietframe)
+
+diet1=data.frame(mean(dietframe$preweight), diet="1")
+predict(dietlm1,  diet1, type="response")
+
+diet2=data.frame(mean(dietframe$preweight), diet="2")
+predict(dietlm1,  diet2, type="response")
+
+diet3=data.frame(mean(dietframe$preweight), diet="3")
+predict(dietlm1,  diet3, type="response")
+
+
+
+#G
+library("imputeTS")
+dietframe = na.replace(dietframe, 0)
+
+dietframe$lost.4kg = dietframe$weight.lost>4
+dietframe$lost.4kg = as.factor(dietframe$lost.4kg)
+# lost.4kg is a binary factor. So outcome Y is now a factor. one should use glm models to investigate
+# the hypotheses of question c)d)e)
+
+#hyoithesys of B cannot be tested for lost.4kg column. because the outcomes are not numbers anymore but binary outcomes
+
+#hypothesys c):
+dietglm=glm(lost.4kg~diet, family=binomial, data=dietframe)
+anova(dietglm, test="Chisq")
+summary(dietglm,  test="Chisq")
+qqnorm(residuals(dietglm))
+shapiro.test(residuals(dietglm))
+plot(fitted(dietglm),residuals(dietglm))
+
+#hypothesys D):
+dietlm5=glm(lost.4kg~diet*gender, data=dietframe)
+#assumtions
+qqnorm(residuals(dietlm5))
+shapiro.test(residuals(dietlm5))
+plot(fitted(dietlm5),residuals(dietlm5))
+
+#hypothesys E):
+dietlm6=glm(lost.4kg~diet*height, data=dietframe)
+anova(dietlm6) #no evidence for interaction: p-value diet:height > 0.05
+summary(dietlm6)
+#assumptions:
+qqnorm(residuals(dietlm6))
+shapiro.test(residuals(dietlm6))
+plot(fitted(dietlm6),residuals(dietlm6))
+
+#hypothesys F):
+
+lostglm=glm(lost.4kg~diet, data=dietframe)
+
+diet1=data.frame(mean(dietframe$preweight), diet="1")
+predict(lostglm,  diet1, type="response")
+
+diet2=data.frame(mean(dietframe$preweight), diet="2")
+predict(lostglm,  diet2, type="response")
+
+diet3=data.frame(mean(dietframe$preweight), diet="3")
+predict(lostglm,  diet3, type="response")
+

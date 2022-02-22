@@ -1,0 +1,33 @@
+Requirements
+
+Python packages:
+
+import tensorflow as tf
+import torch
+import pandas as pd
+from transformers import BertTokenizer
+from keras.preprocessing.sequence import pad_sequences
+from sklearn.model_selection import train_test_split
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+from transformers import BertForSequenceClassification, AdamW, BertConfig
+from transformers import get_linear_schedule_with_warmup
+import time
+import datetime
+import random
+from sklearn.metrics import confusion_matrix
+import numpy as np
+from sklearn.metrics import precision_recall_fscore_support
+import spacy
+from collections import Counter
+import random
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+For all packages we updated to the latest versions.
+Note that we use spaCy version (3.0.5)
+And ran the experiments with pyhton3.7
+
+datasets for training and testing can be found in the following Github repository: https://github.com/Cyvhee/SemEval2018-Task3/tree/master/
+
+
+

@@ -1,0 +1,85 @@
+
+
+MESSAGE: Pygame initialized for simulation.
+
+########## Simulation state - INI ###########
+
+# solutions # : EMPTY 
+
+# sensors # : 20
+
+ ------  parameters ------  
+
+# contact hurt (training agent) # : player
+
+multiple mode: no
+
+enemies list: 4
+
+current enemy: 4
+
+player mode: ai
+
+enemy mode: static
+
+level: 2
+
+clock precision: low
+
+inputs coded: no
+
+random initialization: yes
+
+expiration time: 3000
+
+speed: fastest
+
+load player: yes
+
+load enemy: yes
+
+sound: off
+
+overture time: 100
+
+logs: on
+
+save logs: yes
+
+########## Simulation state - END ###########
+
+PARAMETER CHANGE: enemies = [4]
+
+RUN: run status: enemy: 4; fitness: 3.4865712538350175; player life: 0; enemy life: 90.0; time: 248
+
+RUN: run status: enemy: 4; fitness: 11.28704379932293; player life: 0; enemy life: 80.0; time: 823
+
+RUN: run status: enemy: 4; fitness: 21.61550493721091; player life: 0; enemy life: 70.0; time: 218
+
+RUN: run status: enemy: 4; fitness: -4.859812404361672; player life: 0; enemy life: 100; time: 129
+
+RUN: run status: enemy: 4; fitness: -4.553876891600541; player life: 0; enemy life: 100; time: 95
+
+RUN: run status: enemy: 4; fitness: -5.123963979403259; player life: 0; enemy life: 100; time: 168
+
+RUN: run status: enemy: 4; fitness: -4.553876891600541; player life: 0; enemy life: 100; time: 95
+
+RUN: run status: enemy: 4; fitness: -4.859812404361672; player life: 0; enemy life: 100; time: 129
+
+RUN: run status: enemy: 4; fitness: -6.453624998892692; player life: 0; enemy life: 100; time: 635
+
+RUN: run status: enemy: 4; fitness: 30.299556426609314; player life: 0; enemy life: 60.0; time: 299
+
+RUN: run status: enemy: 4; fitness: 2.654363639171404; player life: 0; enemy life: 90.0; time: 570
+
+RUN: run status: enemy: 4; fitness: -5.4116460518550396; player life: 0; enemy life: 100; time: 224
+
+RUN: run status: enemy: 4; fitness: 2.947910831075583; player life: 0; enemy life: 90.0; time: 425
+
+RUN: run status: enemy: 4; fitness: -4.859812404361672; player life: 0; enemy life: 100; time: 129
+
+RUN: run status: enemy: 4; fitness: -5.313205979041787; player life: 0; enemy life: 100; time: 203
+
+RUN: run status: enemy: 4; fitness: -5.056245805348308; player life: 0; enemy life: 100; time: 157
+
+RUN: run status: enemy: 4; fitness: -4.859812404361672; player life: 0; enemy life: 100; time: 129
